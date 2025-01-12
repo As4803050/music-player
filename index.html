@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Player with Playlist and Repeat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-image: url(body.webp);
+      
+      
+    }
+    .player {
+      margin-top: 20px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #ddd;
+    }
+    li:hover {
+      background-color: #f0f0f0;
+    }
+    .current {
+      background-color: #d0f0ff;
+    }
+    #repeatButton {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    #repeatButton.active {
+      background-color: #ff9800;
+    }
+    .dabba{
+        border: 1px solid black;
+        height: 50px;
+        background-image: url(border.webp);
+        display: flex;
+        font-size: 40px;
+        background-image: url(border.webp);
+        
+    }
+
+  </style>
+</head>
+<body>
+   <div class="dabba">ARA</div>
+  <h1>Media Player with Playlist</h1>
+  <p>Select multiple music or video files:</p>
+  <input type="file" id="fileInput" accept="audio/*,video/*" multiple>
+  <ul id="playlist"></ul>
+  <button id="repeatButton">Repeat Off</button>
+  <div id="mediaContainer" class="player"></div>
+  <button id="ede" onclick="played()"> hfgghggghv</button>
+  <audio controls id="song" src="song.mp3" style="opacity: 0%;"></audio>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const playlist = document.getElementById('playlist');
+    const mediaContainer = document.getElementById('mediaContainer');
+    const repeatButton = document.getElementById('repeatButton');
+    const ede=document.getElementById("ede")
+    const audio=document.getElementById("song")
+    function played(){
+      audio.play();
+      audio.style.opacity="100%"
+    }
+
+    let files = [];
+    let currentIndex = 0;
+    let isRepeat = false;
+
+    // Toggle Repeat Mode
+    repeatButton.addEventListener('click', () => {
+      isRepeat = !isRepeat;
+      repeatButton.textContent = isRepeat ? 'Repeat On' : 'Repeat Off';
+      repeatButton.classList.toggle('active', isRepeat);
+    });
+
+    // Function to play a selected file
+    function playMedia(index) {
+      if (index < 0 || index >= files.length) return;
+
+      currentIndex = index;
+      mediaContainer.innerHTML = ''; // Clear the player
+      const file = files[currentIndex];
+
+      const mediaElement = document.createElement(file.type.startsWith('audio') ? 'audio' : 'video');
+      mediaElement.controls = true;
+      mediaElement.src = URL.createObjectURL(file);
+      mediaElement.style.width = '100%';
+      mediaElement.autoplay = true;
+
+      mediaElement.addEventListener('ended', () => {
+        if (isRepeat) {
+          playMedia(currentIndex); // Replay the current file
+        } else {
+          playMedia(currentIndex + 1); // Play next file
+        }
+      });
+
+      mediaContainer.appendChild(mediaElement);
+
+      // Highlight the current item in the playlist
+      Array.from(playlist.children).forEach((li, idx) => {
+        li.classList.toggle('current', idx === currentIndex);
+      });
+    }
+
+    // Handle file selection
+    fileInput.addEventListener('change', (event) => {
+      playlist.innerHTML = ''; // Clear existing playlist
+      mediaContainer.innerHTML = ''; // Clear the player
+      files = Array.from(event.target.files);
+
+      files.forEach((file, index) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = file.name;
+        listItem.addEventListener('click', () => playMedia(index));
+        playlist.appendChild(listItem);
+      });
+
+      // Auto-play the first file
+      if (files.length > 0) {
+        playMedia(0);
+      }
+    });
+  </script>
+</body>
+</html>
