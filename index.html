@@ -10,8 +10,10 @@
       text-align: center;
       padding: 20px;
       background-image: url(body.webp);
-      
-      
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     .player {
       margin-top: 20px;
@@ -49,9 +51,49 @@
         display: flex;
         font-size: 40px;
         background-image: url(border.webp);
-        
     }
-
+    .list_music {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        width: 200px;
+        display: none;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .list {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 5px;
+        text-align: center;
+        border: none;
+        background-color: #f0f0f0;
+        cursor: pointer;
+    }
+    .list:hover {
+        background-color: #dcdcdc;
+    }
+    #currentSong {
+        margin-top: 10px;
+        font-weight: bold;
+        display: none;
+        text-align: center;
+    }
+    #playPauseBtn {
+        display: none;
+        margin-top: 10px;
+    }
+    #progressBar {
+        width: 200px;
+        margin-top: 10px;
+        display: none;
+    }
+    #timeDisplay {
+        margin-top: 5px;
+        text-align: center;
+        display: none;
+    }
   </style>
 </head>
 <body>
@@ -62,24 +104,217 @@
   <ul id="playlist"></ul>
   <button id="repeatButton">Repeat Off</button>
   <div id="mediaContainer" class="player"></div>
-  <button id="ede" onclick="played()"> hfgghggghv</button>
-  <audio controls id="song" src="song.mp3" style="opacity: 0%;"></audio>
 
+  <button id="togglePlaylistBtn1">Show Playlist 1</button>
+  <button id="togglePlaylistBtn2">Show Playlist 2</button>
+  <button id="togglePlaylistBtn3">Show Playlist 3</button>
+  <button id="togglePlaylistBtn4">Show Playlist 4</button>
+
+  <div class="list_music" id="playlist1">
+      <button class="list" id="song1">ek din aap yun</button>
+      <button class="list" id="song2">Bewafa</button>
+      <button class="list" id="song3">Ayi Nhi</button>
+  </div>
+
+  <div class="list_music" id="playlist2">
+      <button class="list" id="song4">Perfect</button>
+      <button class="list" id="song5">Jawani</button>
+      <button class="list" id="song6">Tu jana na piya</button>
+  </div>
+
+  <div class="list_music" id="playlist3">
+      <button class="list" id="song7">Tu hai Kaha</button>
+      <button class="list" id="song8">NAJA</button>
+      <button class="list" id="song9">NA NA NA NA</button>
+  </div>
+
+  <div class="list_music" id="playlist4">
+      <button class="list" id="song10">Pungi</button>
+      <button class="list" id="song11">ghungroo toot gye</button>
+      <button class="list" id="song12">gumshuda</button>
+  </div>
+
+  <button id="playPauseBtn">Play</button>
+  <div id="currentSong">Currently Playing: ek din aap yun</div>
+  <input type="range" id="progressBar" value="0" min="0" max="100">
+  <div id="timeDisplay">
+      <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+  </div>
+
+  <audio id="audioPlayer" src="ek din aap yun.mp3"></audio>
+  
   <script>
     const fileInput = document.getElementById('fileInput');
     const playlist = document.getElementById('playlist');
     const mediaContainer = document.getElementById('mediaContainer');
     const repeatButton = document.getElementById('repeatButton');
-    const ede=document.getElementById("ede")
-    const audio=document.getElementById("song")
-    function played(){
-      audio.play();
-      audio.style.opacity="100%"
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const currentSongDisplay = document.getElementById('currentSong');
+    const progressBar = document.getElementById('progressBar');
+    const currentTimeDisplay = document.getElementById('currentTime');
+    const totalTimeDisplay = document.getElementById('totalTime');
+    const timeDisplay = document.getElementById('timeDisplay');
+
+    let currentMedia = null; // To store the current media element (audio or video)
+
+    function updateProgressBar() {
+      if (currentMedia) {
+        const progress = (currentMedia.currentTime / currentMedia.duration) * 100;
+        progressBar.value = progress;
+        currentTimeDisplay.textContent = formatTime(currentMedia.currentTime);
+        totalTimeDisplay.textContent = formatTime(currentMedia.duration);
+      }
     }
 
-    let files = [];
-    let currentIndex = 0;
-    let isRepeat = false;
+    function handleProgressBarClick(event) {
+      if (currentMedia) {
+        const progressWidth = progressBar.offsetWidth;
+        const clickPosition = event.offsetX;
+        const newTime = (clickPosition / progressWidth) * currentMedia.duration;
+        currentMedia.currentTime = newTime;
+      }
+    }
+
+    function playMedia(index) {
+      if (index < 0 || index >= files.length) return;
+
+      currentIndex = index;
+      mediaContainer.innerHTML = ''; // Clear the player
+
+      const file = files[currentIndex];
+      const mediaElement = document.createElement(file.type.startsWith('audio') ? 'audio' : 'video');
+      mediaElement.controls = true;
+      mediaElement.src = URL.createObjectURL(file);
+      mediaElement.style.width = '100%';
+      mediaElement.autoplay = true;
+
+      mediaElement.addEventListener('ended', () => {
+        if (isRepeat) {
+          playMedia(currentIndex); // Replay the current file
+        } else {
+          playMedia(currentIndex + 1); // Play next file
+        }
+      });
+
+      // Set the current media element for progress bar updates
+      currentMedia = mediaElement;
+      mediaContainer.appendChild(mediaElement);
+
+      // Highlight the current item in the playlist
+      Array.from(playlist.children).forEach((li, idx) => {
+        li.classList.toggle('current', idx === currentIndex);
+      });
+    }
+
+    // Update the current song when selecting a song from the playlist
+    function selectSong(index) {
+      currentSongIndex = index;
+      loadSong(songs[currentSongIndex].path);
+      currentSongDisplay.textContent = 'Currently Playing: ' + songs[currentSongIndex].name;
+      timeDisplay.style.display = 'block'; // Show time display when a song is playing
+      currentMedia = audioPlayer; // Set current media to the audio player for the progress bar
+    }
+
+    // Event listener for the progress bar click event
+    progressBar.addEventListener('click', handleProgressBarClick);
+
+    // Event listener for the time update event on the audio player
+    audioPlayer.addEventListener('timeupdate', updateProgressBar);
+
+    // Existing code for loading songs and handling playlist items goes here
+    const playlists = [
+                { button: 'togglePlaylistBtn1', list: 'playlist1' },
+                { button: 'togglePlaylistBtn2', list: 'playlist2' },
+                { button: 'togglePlaylistBtn3', list: 'playlist3' },
+                { button: 'togglePlaylistBtn4', list: 'playlist4' }
+            ];
+
+            const songs = [
+                { name: 'ek din aap yun', path: 'ek din aap yun.mp3' },
+                { name: 'Bewafa', path: 'song.mp3' },
+                { name: 'Ayi Nhi', path: 'ayi nhi.mp3' },
+                { name: 'Perfect', path: 'perfect.mp3' },
+                { name: 'Jawani', path: 'jawani.mp3' },
+                { name: 'Tu jana na piya', path: 'Tu jana na Piya.mp3' },
+                { name: 'Tu hai Kaha', path: 'Tu hai kaha.mp3' },
+                { name: 'NAJA', path: 'NAJA.mp3' },
+                { name: 'NA NA NA NA', path: 'na-na-na-na.mp3' },
+                { name: 'Pungi', path: 'pungi.mp3' },
+                { name: 'Ghungroo toot gye', path: 'ghungroo toot gye.mp3' },
+                { name: 'Gumshuda', path: 'gumshuda.mp3' }
+            ];
+
+              let currentSongIndex = 0;
+            let isPlaying = false;
+
+            function loadSong(song) {
+                audioPlayer.src = song;
+                audioPlayer.play();
+                playPauseBtn.textContent = 'Pause';
+                isPlaying = true;
+            }
+
+            function togglePlayPause() {
+                if (isPlaying) {
+                    audioPlayer.pause();
+                    playPauseBtn.textContent = 'Play';
+                } else {
+                    audioPlayer.play();
+                    playPauseBtn.textContent = 'Pause';
+                }
+                isPlaying = !isPlaying;
+            }
+
+            function selectSong(index) {
+                currentSongIndex = index;
+                loadSong(songs[currentSongIndex].path);
+                currentSongDisplay.textContent = 'Currently Playing: ' + songs[currentSongIndex].name;
+                timeDisplay.style.display = 'block'; // Show time display when a song is playing
+            }
+
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = Math.floor(seconds % 60);
+                return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+            }
+
+            function updateProgressBar() {
+                const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                progressBar.value = progress;
+                currentTimeDisplay.textContent = formatTime(audioPlayer.currentTime);
+                totalTimeDisplay.textContent = formatTime(audioPlayer.duration);
+            }
+
+            function handleProgressBarClick(event) {
+                const progressWidth = progressBar.offsetWidth;
+                const clickPosition = event.offsetX;
+                const newTime = (clickPosition / progressWidth) * audioPlayer.duration;
+                audioPlayer.currentTime = newTime;
+            }
+
+            audioPlayer.addEventListener('timeupdate', updateProgressBar);
+            progressBar.addEventListener('click', handleProgressBarClick);
+
+            playlists.forEach(({ button, list }) => {
+                document.getElementById(button).addEventListener('click', () => {
+                    playlists.forEach(({ list: otherList }) => {
+                        document.getElementById(otherList).style.display = 'none';
+                    });
+                    document.getElementById(list).style.display = 'block';
+                    playPauseBtn.style.display = 'inline-block';
+                    currentSongDisplay.style.display = 'block';
+                    progressBar.style.display = 'block';
+                });
+            });
+
+            for (let i = 0; i < songs.length; i++) {
+                document.getElementById(`song${i + 1}`).addEventListener('click', () => selectSong(i));
+            }
+
+            playPauseBtn.addEventListener('click', togglePlayPause);
+   
+
 
     // Toggle Repeat Mode
     repeatButton.addEventListener('click', () => {
