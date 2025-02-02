@@ -5,145 +5,224 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Media Player with Playlist and Repeat</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-      background-image: url(body.webp);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .player {
-      margin-top: 20px;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      padding: 10px;
-      cursor: pointer;
-      border-bottom: 1px solid #ddd;
-    }
-    li:hover {
-      background-color: #f0f0f0;
-    }
-    .current {
-      background-color: #d0f0ff;
-    }
-    #repeatButton {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    #repeatButton.active {
-      background-color: #ff9800;
-    }
-    .dabba{
-        border: 1px solid black;
-        height: 50px;
-        background-image: url(border.webp);
-        display: flex;
-        font-size: 40px;
-        background-image: url(border.webp);
-    }
-    .list_music {
-        max-height: 300px;
-        overflow-y: auto;
-        border: 1px solid #ccc;
-        padding: 10px;
-        width: 200px;
-        display: none;
-        margin-bottom: 10px;
-        text-align: center;
-    }
-    .list {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 5px;
-        text-align: center;
-        border: none;
-        background-color: #f0f0f0;
-        cursor: pointer;
-    }
-    .list:hover {
-        background-color: #dcdcdc;
-    }
-    #currentSong {
-        margin-top: 10px;
-        font-weight: bold;
-        display: none;
-        text-align: center;
-    }
-    #playPauseBtn {
-        display: none;
-        margin-top: 10px;
-    }
-    #progressBar {
-        width: 200px;
-        margin-top: 10px;
-        display: none;
-    }
-    #timeDisplay {
-        margin-top: 5px;
-        text-align: center;
-        display: none;
-    }
+body {
+  font-family: Arial, sans-serif;
+  background: url('classical.jpg') no-repeat center center/cover;
+  text-align: center;
+  padding: 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+
+
+.player {
+  margin-top: 20px;
+}
+
+/* Glassmorphism effect for the player */
+.dabba {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px; /* Adjust height as needed */
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  font-weight: bold;
+  color: white;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  font-family: papyrus;
+}
+
+.logo {
+  height: 80px; /* Adjust size */
+  margin-right: 10px;
+}
+
+
+
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+li:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.current {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+#repeatButton {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+#repeatButton.active {
+  background-color: #ff9800;
+}
+
+.list_music {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 10px;
+  width: 220px;
+  display: none;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.list {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 5px;
+  text-align: center;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.list:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+#currentSong {
+  margin-top: 10px;
+  font-weight: bold;
+  display: none;
+  text-align: center;
+}
+
+#playPauseBtn {
+  display: none;
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  transition: 0.3s;
+}
+
+#playPauseBtn:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+#progressBar {
+  width: 220px;
+  margin-top: 10px;
+  display: none;
+}
+
+#timeDisplay {
+  margin-top: 5px;
+  text-align: center;
+  display: none;
+}
+
+button {
+  margin: 5px;
+  padding: 10px;
+}
+
+#playlistbtn {
+  display: flex;
+  gap: 10px; /* Adjust spacing between buttons */
+}
+
   </style>
 </head>
 <body>
-   <div class="dabba">ARA</div>
-  <h1>Media Player with Playlist</h1>
+
+  <div class="background">
+
+   <div class="dabba">
+    <img src="logo2.avif" alt="music logo" class="logo">
+    ARA</div>
+
+ 
+
+
   <p>Select multiple music or video files:</p>
   <input type="file" id="fileInput" accept="audio/*,video/*" multiple>
   <ul id="playlist"></ul>
   <button id="repeatButton">Repeat Off</button>
   <div id="mediaContainer" class="player"></div>
-
-  <button id="togglePlaylistBtn1">Show Playlist 1</button>
-  <button id="togglePlaylistBtn2">Show Playlist 2</button>
-  <button id="togglePlaylistBtn3">Show Playlist 3</button>
-  <button id="togglePlaylistBtn4">Show Playlist 4</button>
+<div id="playlistbtn">
+  <button id="togglePlaylistBtn1">Motivational</button>
+  <button id="togglePlaylistBtn2">Love</button>
+  <button id="togglePlaylistBtn3">Dance</button>
+  <button id="togglePlaylistBtn4">Sad</button>
+  </div>
 
   <div class="list_music" id="playlist1">
-      <button class="list" id="song1">ek din aap yun</button>
-      <button class="list" id="song2">Bewafa</button>
-      <button class="list" id="song3">Ayi Nhi</button>
+      <button class="list" id="song1">Zinda</button>
+      <button class="list" id="song2">Kar har Maidan</button>
+      <button class="list" id="song3">Dangal</button>
   </div>
 
   <div class="list_music" id="playlist2">
-      <button class="list" id="song4">Perfect</button>
-      <button class="list" id="song5">Jawani</button>
-      <button class="list" id="song6">Tu jana na piya</button>
+      <button class="list" id="song4">Apna Bana le</button>
+      <button class="list" id="song5">Ve Maahi</button>
+      <button class="list" id="song6">Maiyya Mainu</button>
   </div>
 
   <div class="list_music" id="playlist3">
-      <button class="list" id="song7">Tu hai Kaha</button>
-      <button class="list" id="song8">NAJA</button>
-      <button class="list" id="song9">NA NA NA NA</button>
+      <button class="list" id="song7">Gallan Goodiyaan</button>
+      <button class="list" id="song8">Ghagra</button>
+      <button class="list" id="song9">Hawan krenge</button>
   </div>
 
   <div class="list_music" id="playlist4">
-      <button class="list" id="song10">Pungi</button>
-      <button class="list" id="song11">ghungroo toot gye</button>
-      <button class="list" id="song12">gumshuda</button>
+      <button class="list" id="song10">Kyu mai jagoon</button>
+      <button class="list" id="song11">Ae dil hai mushkil</button>
+      <button class="list" id="song12">Sun rha hai na tu </button>
   </div>
 
   <button id="playPauseBtn">Play</button>
-  <div id="currentSong">Currently Playing: ek din aap yun</div>
+  <div id="currentSong">Currently Playing: Zinda</div>
   <input type="range" id="progressBar" value="0" min="0" max="100">
   <div id="timeDisplay">
       <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
   </div>
 
-  <audio id="audioPlayer" src="ek din aap yun.mp3"></audio>
+  <audio id="audioPlayer" src="zinda.mp3"></audio>
+
+  </div>
   
   <script>
+
+let isRepeat = false;
+
     const fileInput = document.getElementById('fileInput');
     const playlist = document.getElementById('playlist');
     const mediaContainer = document.getElementById('mediaContainer');
@@ -156,7 +235,7 @@
     const totalTimeDisplay = document.getElementById('totalTime');
     const timeDisplay = document.getElementById('timeDisplay');
 
-    let currentMedia = null; // To store the current media element (audio or video)
+    let currentMedia = audioPlayer;  // Default to audioPlayer
 
     function updateProgressBar() {
       if (currentMedia) {
@@ -191,11 +270,11 @@
 
       mediaElement.addEventListener('ended', () => {
         if (isRepeat) {
-          playMedia(currentIndex); // Replay the current file
+            playMedia(currentMediaIndex); // Replay the current file
         } else {
-          playMedia(currentIndex + 1); // Play next file
+            playMedia(currentMediaIndex + 1); // Play next file
         }
-      });
+    });
 
       // Set the current media element for progress bar updates
       currentMedia = mediaElement;
@@ -231,18 +310,18 @@
             ];
 
             const songs = [
-                { name: 'ek din aap yun', path: 'ek din aap yun.mp3' },
-                { name: 'Bewafa', path: 'song.mp3' },
-                { name: 'Ayi Nhi', path: 'ayi nhi.mp3' },
-                { name: 'Perfect', path: 'perfect.mp3' },
-                { name: 'Jawani', path: 'jawani.mp3' },
-                { name: 'Tu jana na piya', path: 'Tu jana na Piya.mp3' },
-                { name: 'Tu hai Kaha', path: 'Tu hai kaha.mp3' },
-                { name: 'NAJA', path: 'NAJA.mp3' },
-                { name: 'NA NA NA NA', path: 'na-na-na-na.mp3' },
-                { name: 'Pungi', path: 'pungi.mp3' },
-                { name: 'Ghungroo toot gye', path: 'ghungroo toot gye.mp3' },
-                { name: 'Gumshuda', path: 'gumshuda.mp3' }
+                { name: 'Zinda', path: 'zinda.mp3' },
+                { name: 'Kar har Maidan', path: 'Kar Har Maidaan.mp3' },
+                { name: 'Dangal', path: 'Dangal.mp3' },
+                { name: 'Apna Bana le', path: 'Apna Bana Le.mp3' },
+                { name: 'Ve Maahi', path: 'Ve Maahi.mp3' },
+                { name: 'Maiyya Mainu', path: 'Maiyya Mainu.mp3' },
+                { name: 'Gallan Goodiyaan', path: 'GALLAN GOODIYAAN.mp3' },
+                { name: 'Ghagra', path: 'Ghagra.mp3' },
+                { name: 'Hawan Krenge', path: 'Hawan krenge.mp3' },
+                { name: 'Kyu mai jagoon', path: 'Kyun Main Jaagoon.mp3' },
+                { name: 'Ae dil hai mushkil', path: 'Ae Dil Hai Mushkil.mp3' },
+                { name: 'Sun rha hai na tu', path: 'Sunn Raha Hai Na Tu.mp3' }
             ];
 
               let currentSongIndex = 0;
@@ -316,13 +395,22 @@
    
 
 
-    // Toggle Repeat Mode
-    repeatButton.addEventListener('click', () => {
+     // Toggle Repeat Mode
+     repeatButton.addEventListener('click', () => {
       isRepeat = !isRepeat;
       repeatButton.textContent = isRepeat ? 'Repeat On' : 'Repeat Off';
       repeatButton.classList.toggle('active', isRepeat);
     });
 
+    audioPlayer.addEventListener('ended', () => {
+    if (isRepeat) {
+        audioPlayer.currentTime = 0;
+        audioPlayer.play();
+    } else {
+        currentSongIndex = (currentSongIndex + 1) % songs.length; // Loop through playlist
+        selectSong(currentSongIndex);
+    }
+});
     // Function to play a selected file
     function playMedia(index) {
       if (index < 0 || index >= files.length) return;
