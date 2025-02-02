@@ -365,27 +365,81 @@ let isRepeat = false;
                 totalTimeDisplay.textContent = formatTime(audioPlayer.duration);
             }
 
-            function handleProgressBarClick(event) {
+            let isDragging = false;
+
+function handleProgressBarStart(event) {
   let clickPosition;
 
-  // Check if it's a touch event (for mobile devices)
+  // For touch events (mobile)
   if (event.type === 'touchstart' || event.type === 'touchmove') {
-    clickPosition = event.touches[0].clientX; // Get the touch position
+    clickPosition = event.touches[0].clientX; // Get touch position
   } else {
-    clickPosition = event.offsetX; // Normal click position
+    clickPosition = event.offsetX; // Normal click position for desktop
   }
 
-  if (currentMedia) {
-    const progressWidth = progressBar.offsetWidth;
-    const newTime = (clickPosition / progressWidth) * currentMedia.duration;
+  isDragging = true;
+
+  const progressBarRect = progressBar.getBoundingClientRect();
+  const progressWidth = progressBarRect.width;
+  const clickX = clickPosition - progressBarRect.left; // Adjust click position relative to the progress bar
+
+  // Set the initial value of the progress bar visually
+  progressBar.value = (clickX / progressWidth) * 100;
+}
+
+function handleProgressBarMove(event) {
+  if (!isDragging) return; // Only update if dragging
+
+  let clickPosition;
+
+  if (event.type === 'touchmove') {
+    clickPosition = event.touches[0].clientX;
+  } else {
+    clickPosition = event.offsetX;
+  }
+
+  const progressBarRect = progressBar.getBoundingClientRect();
+  const progressWidth = progressBarRect.width;
+  const clickX = clickPosition - progressBarRect.left;
+
+  // Update the visual position of the progress bar
+  progressBar.value = (clickX / progressWidth) * 100;
+}
+
+function handleProgressBarEnd(event) {
+  if (!isDragging) return;
+
+  isDragging = false;
+
+  let clickPosition;
+
+  // For touch events (mobile)
+  if (event.type === 'touchend' || event.type === 'mouseup') {
+    if (event.type === 'touchend') {
+      clickPosition = event.changedTouches[0].clientX; // For mobile
+    } else {
+      clickPosition = event.offsetX; // For desktop
+    }
+
+    const progressBarRect = progressBar.getBoundingClientRect();
+    const progressWidth = progressBarRect.width;
+    const clickX = clickPosition - progressBarRect.left;
+
+    // Update the current media time only after dragging ends
+    const newTime = (clickX / progressWidth) * currentMedia.duration;
     currentMedia.currentTime = newTime;
   }
 }
 
-// Add event listeners for both mouse and touch events
-progressBar.addEventListener('click', handleProgressBarClick);
-progressBar.addEventListener('touchstart', handleProgressBarClick);
-progressBar.addEventListener('touchmove', handleProgressBarClick);
+// Attach the events
+progressBar.addEventListener('mousedown', handleProgressBarStart);
+progressBar.addEventListener('mousemove', handleProgressBarMove);
+progressBar.addEventListener('mouseup', handleProgressBarEnd);
+
+progressBar.addEventListener('touchstart', handleProgressBarStart);
+progressBar.addEventListener('touchmove', handleProgressBarMove);
+progressBar.addEventListener('touchend', handleProgressBarEnd);
+
 
 
             audioPlayer.addEventListener('timeupdate', updateProgressBar);
