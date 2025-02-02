@@ -45,16 +45,15 @@ body {
 }
 
 .logo {
-  height: 80px; /* Adjust size */
+  height: 60px;  /* Adjust size for mobile */
   margin-right: 10px;
-}
-
 
 
 
 ul {
   list-style-type: none;
   padding: 0;
+   margin: 0;
 }
 
 li {
@@ -91,7 +90,8 @@ li:hover {
   overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 10px;
-  width: 220px;
+  width: 100%;
+  max-width: 250px;  /* Make it responsive */
   display: none;
   margin-bottom: 10px;
   border-radius: 10px;
@@ -138,7 +138,8 @@ li:hover {
 }
 
 #progressBar {
-  width: 220px;
+  width: 100%;
+  max-width: 250px;
   margin-top: 10px;
   display: none;
 }
@@ -157,6 +158,66 @@ button {
 #playlistbtn {
   display: flex;
   gap: 10px; /* Adjust spacing between buttons */
+  flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+  justify-content: center;
+}
+
+  #playlistbtn button {
+  min-width: 120px; /* Ensure buttons are big enough to be clicked easily */
+  padding: 10px;
+}
+
+@media (max-width: 768px) {
+  .dabba {
+    font-size: 40px; /* Smaller font size for mobile */
+    height: 60px;
+  }
+
+  .logo {
+    height: 50px;  /* Adjust logo size for mobile */
+  }
+
+  #playlistbtn {
+    flex-direction: column; /* Stack the playlist buttons on smaller screens */
+  }
+
+  #playlistbtn button {
+    width: 100%; /* Full width buttons on mobile */
+  }
+
+  .list_music {
+    width: 100%; /* Full width on mobile */
+    max-width: none;
+  }
+
+  #progressBar {
+    width: 100%; /* Full width progress bar on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 10px; /* Reduce padding on very small screens */
+  }
+
+  .dabba {
+    font-size: 30px; /* Even smaller font size on very small screens */
+    height: 50px;
+  }
+
+  .logo {
+    height: 40px;  /* Adjust logo for very small screens */
+  }
+
+  #repeatButton,
+  #playPauseBtn {
+    padding: 8px 16px; /* Smaller buttons for smaller screens */
+  }
+
+  #playlistbtn button {
+    font-size: 14px; /* Adjust font size for buttons on very small screens */
+    padding: 8px;
+  }
 }
 
   </style>
