@@ -366,14 +366,30 @@ let isRepeat = false;
             }
 
             function handleProgressBarClick(event) {
-                const progressWidth = progressBar.offsetWidth;
-                const clickPosition = event.offsetX;
-                const newTime = (clickPosition / progressWidth) * audioPlayer.duration;
-                audioPlayer.currentTime = newTime;
-            }
+  let clickPosition;
+
+  // Check if it's a touch event (for mobile devices)
+  if (event.type === 'touchstart' || event.type === 'touchmove') {
+    clickPosition = event.touches[0].clientX; // Get the touch position
+  } else {
+    clickPosition = event.offsetX; // Normal click position
+  }
+
+  if (currentMedia) {
+    const progressWidth = progressBar.offsetWidth;
+    const newTime = (clickPosition / progressWidth) * currentMedia.duration;
+    currentMedia.currentTime = newTime;
+  }
+}
+
+// Add event listeners for both mouse and touch events
+progressBar.addEventListener('click', handleProgressBarClick);
+progressBar.addEventListener('touchstart', handleProgressBarClick);
+progressBar.addEventListener('touchmove', handleProgressBarClick);
+
 
             audioPlayer.addEventListener('timeupdate', updateProgressBar);
-            progressBar.addEventListener('click', handleProgressBarClick);
+            
 
             playlists.forEach(({ button, list }) => {
                 document.getElementById(button).addEventListener('click', () => {
